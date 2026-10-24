@@ -6,7 +6,7 @@ import { site } from '../data/site';
 
 interface Props { title?: string; description?: string; image?: string; footer?: boolean; header?: boolean; type?: 'website' | 'article' }
 const { title, description = site.description, image = '/og.png', footer = true, header = true, type = 'website' } = Astro.props;
-const fullTitle = title ? `${title} | ${site.name}` : `${site.name} - safe autonomy and learning-based control`;
+const fullTitle = title ? `${title} | ${site.name}` : 'Dasari Raj Vamsi';
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
 const ogImage = new URL(image, Astro.site ?? site.url).href;
 const jsonLd = { '@context': 'https://schema.org', '@type': 'Person', name: 'Dasari Raj Vamsi', url: site.url, email: `mailto:${site.email}`, sameAs: [site.github, site.linkedin], affiliation: 'ABV-IIITM Gwalior' };

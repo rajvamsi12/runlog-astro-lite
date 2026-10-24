@@ -1,13 +1,9 @@
 {
   "name": "Raj Vamsi",
-  "description": "Dasari Raj Vamsi - researcher in safe autonomy, learning-based control and imitation learning. Integrated B.Tech + M.Tech at ABV-IIITM Gwalior, research intern at the University of Virginia.",
+  "description": "Dasari Raj Vamsi - Integrated B.Tech + M.Tech student at ABV-IIITM Gwalior working on safe learning-based control and autonomous driving.",
   "email": "dasarirajvamsi@gmail.com",
-  "announcement": {
-    "text": "Looking for PhD positions starting Fall 2027 in autonomous robotics and safe learning-based control",
-    "href": "mailto:dasarirajvamsi@gmail.com"
-  },
   "cta": {
-    "label": "Download CV",
+    "label": "CV",
     "href": "/Raj_Vamsi_CV.pdf"
   }
 }
