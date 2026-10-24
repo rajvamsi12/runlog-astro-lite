@@ -1,19 +1,18 @@
 {
   "hero": {
-    "label": "agent runtime",
-    "title": "Agents that ship work, not demos.",
-    "lede": "Runlog is the runtime for production AI agents. Plan, call tools, verify the result, and replay every step when something looks off."
+    "label": "safe autonomy · learning-based control",
+    "title": "Autonomy that stays safe when the world stops looking like the training data.",
+    "lede": "I'm Raj Vamsi, an Integrated B.Tech + M.Tech student at ABV-IIITM Gwalior and a research intern at the University of Virginia. I work where learned models meet safety guarantees - neural control barrier functions, imitation learning and real-to-sim driving in CARLA."
   },
-  "logos": ["northwind", "Halcyon", "kestrel/ai", "AMPERE", "fieldnote", "Quarry"],
+  "logos": ["ABV-IIITM Gwalior", "Univ. of Virginia", "IIIT Hyderabad", "CARLA", "F1TENTH", "WAFR 2026"],
   "stats": [
-    { "value": "41M", "label": "tool calls a month", "delta": "+18% MoM" },
-    { "value": "99.95%", "label": "uptime, backed by SLA", "delta": "90 days" },
-    { "value": "38ms", "label": "median overhead", "delta": "-22% QoQ" },
-    { "value": "0", "label": "unapproved writes", "delta": "since launch" }
+    { "value": "0/200", "label": "crashes on held-out tracks", "delta": "was 12/200" },
+    { "value": "2", "label": "papers under review", "delta": "WAFR · TR-C" },
+    { "value": "8.73", "label": "CGPA, out of 10", "delta": "90th pct" },
+    { "value": "AIR 2000", "label": "GATE CS 2025", "delta": "top 1%" }
   ],
-  "testimonial": {
-    "quote": "We moved four agents from a notebook to production in two weeks. The replay view alone saved us a hire.",
-    "name": "Mara Okafor",
-    "role": "Head of Platform, Northwind"
+  "quote": {
+    "text": "Treat \"it works in this scenario\" as the beginning of a question rather than the end of one.",
+    "source": "From my research statement"
   }
 }

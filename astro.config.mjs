@@ -5,7 +5,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://runlog-lite.pages.dev',
+  site: 'https://rajvamsi12.github.io',
   integrations: [mdx(), sitemap()],
   vite: { plugins: [tailwindcss()] },
 });

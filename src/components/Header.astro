@@ -48,7 +48,7 @@ const path = Astro.url.pathname;
     <div class="mt-auto px-5 pt-5 pb-7 border-t border-rule flex flex-col gap-4">
       <div class="flex items-center"><span class="label">Theme</span><span class="ml-auto"><ThemeSwitcher /></span></div>
       <a href={site.cta.href} class="btn btn-primary w-full">{site.cta.label} -&gt;</a>
-      <p class="text-[11px] text-smoke">All systems normal</p>
+      <p class="text-[11px] text-smoke">{site.email}</p>
     </div>
   </div>
 </dialog>

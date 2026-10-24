@@ -5,60 +5,52 @@ const k = (s: string) => `<b class="text-ink font-semibold">${s}</b>`;
 
 const tabs = [
   {
-    id: 'ts',
-    label: 'TypeScript',
-    code: `${k('import')} { agent, tool } ${k('from')} "@runlog/sdk";
-
-${c('// typed tools: inputs are validated before every call')}
-${k('const')} createPr = tool("repo.create_pr", {
-  input: { branch: "string", title: "string" },
-  approval: "required",
-});
-
-${k('export default')} agent("triage-bot", {
-  model: "your-model",
-  tools: [createPr],
-  budget: { usd: 0.10, steps: 12 },
-  verify: ${k('async')} (run) => run.tests.passed,
-});`,
+    id: 'filter',
+    label: 'safety_filter',
+    code: `${c('# simplified sketch of the Neural ICBF safety filter (one control step)')}
+${k('def')} safe_action(x):
+    u_ref = policy(x)                    ${c('# imitation-learned from an NMPC')}
+    h, dh = barrier(x), grad(barrier)(x)  ${c('# learned barrier, autodiff')}
+    f, g  = neural_ode.drift(x), neural_ode.input(x)
+    ${k('return')} qp(
+        minimize = norm(u - u_ref),
+        subject_to = [
+            dh @ (f + g @ u) >= -alpha(h),  ${c('# stay in the safe set')}
+            u_min <= u <= u_max,            ${c('# input constraints')}
+            tire_grip(x, u) <= mu,          ${c('# racing extension')}
+        ],
+    )`,
   },
   {
-    id: 'py',
-    label: 'Python',
-    code: `${k('from')} runlog ${k('import')} agent, tool
-
-${c('# typed tools: inputs are validated before every call')}
-create_pr = tool(
-    "repo.create_pr",
-    input={"branch": str, "title": str},
-    approval="required",
-)
-
-triage = agent(
-    "triage-bot",
-    model="your-model",
-    tools=[create_pr],
-    budget={"usd": 0.10, "steps": 12},
-    verify=${k('lambda')} run: run.tests.passed,
-)`,
+    id: 'labels',
+    label: 'labeling',
+    code: `${c('# forward-invariance-aware labels: a state is only "safe"')}
+${c('# if some admissible input keeps it safe as it evolves')}
+${k('def')} label(x0):
+    ${k('if not')} geometrically_safe(x0):
+        ${k('return')} UNSAFE
+    ${k('for')} maneuver ${k('in')} escape_set:      ${c('# 22 maneuvers on F1TENTH')}
+        traj = rollout(x0, maneuver, u_limits)
+        ${k('if')} all(geometrically_safe(x) ${k('for')} x ${k('in')} traj):
+            ${k('return')} SAFE
+    ${k('return')} UNSAFE                       ${c('# 28.95% of samples relabeled')}`,
   },
   {
-    id: 'curl',
-    label: 'cURL',
-    code: `${c('# start a run and stream every step back')}
-curl https://api.example.com/v1/runs \\
-  -H "Authorization: Bearer $RUNLOG_KEY" \\
-  -d '{
-    "agent": "triage-bot",
-    "input": "fix the flaky checkout test",
-    "stream": true
-  }'`,
+    id: 'real2sim',
+    label: 'real2sim',
+    code: `${c('# Gwalior traffic -> CARLA Town10HD, then screen for collisions')}
+${k('for')} scene ${k('in')} candidates:                 ${c('# 26,868 candidates')}
+    tracks = calibrate(scene, regions=6)   ${c('# left-hand traffic, per-region map')}
+    actors = spawn_road_aligned(tracks, size_matched_blueprints)
+    ${k('if')} offline_collision_predictor(actors):
+        actors = separate_trajectories(actors)  ${c('# recovered 653')}
+    replay(actors, controller=synced_pid)  ${c('# tracking error < 0.3 m')}`,
   },
 ];
 ---
 
 <div class="code-tabs border border-rule bg-canvas" data-tabs>
-  <div class="flex border-b border-rule text-[13px]" role="tablist" aria-label="SDK language">
+  <div class="flex border-b border-rule text-[13px]" role="tablist" aria-label="Method sketches">
     {tabs.map((t, i) => (
       <button
         type="button"
@@ -69,7 +61,7 @@ curl https://api.example.com/v1/runs \\
         class="tab px-4 h-11 border-r border-rule text-smoke hover:text-ink"
       >{t.label}</button>
     ))}
-    <span class="ml-auto self-center pr-4 text-[12px] text-smoke hidden sm:inline">agent.config</span>
+    <span class="ml-auto self-center pr-4 text-[12px] text-smoke hidden sm:inline">sketch.py</span>
   </div>
   {tabs.map((t, i) => (
     <div role="tabpanel" id={`panel-${t.id}`} aria-labelledby={`tab-${t.id}`} hidden={i !== 0}>

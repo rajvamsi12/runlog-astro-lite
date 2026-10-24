@@ -1,0 +1,31 @@
+---
+title: Replaying Gwalior traffic inside CARLA
+excerpt: Notes from my M.Tech thesis - turning lane-less, left-hand Indian traffic into thousands of collision-free simulation scenarios.
+date: 2026-10-10
+category: projects
+author: Dasari Raj Vamsi
+readingTime: 3
+---
+
+CARLA was built for structured, right-hand traffic. Gwalior's roads are neither. My M.Tech thesis with Dr. Rahul Kala builds a real-to-sim pipeline that replays real Indian trajectories in CARLA Town10HD, so driving policies can be trained and stress-tested on behavior they would otherwise never see.
+
+Code: [github.com/rajvamsi12/real2sim-trajectory-style-transfer](https://github.com/rajvamsi12/real2sim-trajectory-style-transfer)
+
+## From video to scenarios
+
+- A 6-region calibrated mapping takes left-hand traffic into Town10HD, using size-matched vehicle blueprints so CARLA Autopilot can be benchmarked on the same scenes.
+- Out of **26,868** candidates, **5,212** valid scenarios were curated across 6 maneuvers, including vehicle following mined from leader-vehicle annotations.
+
+## Making the replay faithful
+
+The first replay drifted badly. Rebuilding it with time-synchronized PID control and road-aligned spawns cut tracking error from **5.9 m to under 0.3 m**.
+
+## Screening for collisions before CARLA
+
+An offline collision predictor screens about 5k scenarios in roughly 2 minutes and caught **20/20** failures in CARLA validation. Size-compensating trajectory separation then recovered **653** scenarios, for **2,912** collision-free scenarios in total.
+
+## Before this: behavior cloning
+
+The thesis grew out of my iHub-Data (IIIT Hyderabad) internship, where I trained a SegFormer-B1 behavior cloning model on ~66,000 image-command pairs (0.6876 m/s velocity RMSE, 4.89°/s steering RMSE), with TTC-based collision avoidance and PID controllers for closed-loop driving.
+
+Next: a multi-modal imitation-learning policy trained on these scenarios. This line of work is also the basis of a paper under review at WAFR 2026.

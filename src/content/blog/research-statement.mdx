@@ -1,0 +1,49 @@
+---
+title: When nothing looks like the training data
+excerpt: My research statement - why I want to spend a PhD making autonomous systems behave reliably in situations they were never trained for.
+date: 2026-10-25
+category: research
+author: Dasari Raj Vamsi
+readingTime: 6
+featured: true
+---
+
+The first time I watched a self-driving policy I had trained crash into a parked auto-rickshaw in a CARLA simulation of Gwalior traffic, I didn't feel frustrated. I felt like I'd finally found the actual problem worth working on. The model had learned to drive well in every scenario I'd shown it. It just hadn't learned what to do when the world gave it something new. That gap, between performing well on a benchmark and behaving safely in the messiness of the real world, is what I want to spend my PhD closing.
+
+## The question
+
+My research question is how to make autonomous systems take reliable decisions when they encounter situations and uncertainties they were never explicitly trained for. This sits at the intersection of computer vision, machine learning, and control theory.
+
+Robots and autonomous vehicles today do impressively well inside the boundaries of controlled environments and clean datasets. The moment those boundaries disappear, so does their reliability. For a self-driving car, a delivery robot, or a medical robot to actually be trusted with a task, it needs more than good average performance. It needs to know how to behave when the situation stops looking like anything in its training data. I think this is one of the most consequential open problems standing between the autonomous systems we have now and the ones we actually want to live alongside.
+
+## Where it came from
+
+This question didn't arrive as an abstract interest. It grew out of specific work. I started out convinced that research meant designing a model and training it well. That changed when I began working with Dr. Rahul Kala, who showed me what a real research pipeline actually looks like, and how small a piece "train the model" really is inside it.
+
+It sharpened further during my research internship with IIIT Hyderabad, where I worked on converting real Indian traffic scenarios into the CARLA simulator to train behavior cloning models on Indian driving patterns. This is where the rickshaw crash happened, and where I learned to actually solve for it. Vehicles would overlap or spawn incorrectly during the domain conversion, so I built a spawn correction mechanism using a retraction algorithm, and added a time-to-collision based collision avoidance layer to keep the policy from confidently driving into things it hadn't seen before. It was the first time I understood, viscerally rather than academically, that a model's benchmark accuracy tells you almost nothing about whether it will hold up outside the benchmark.
+
+## Safety is a property of the future
+
+The second experience that shaped how I think about this problem came during my internship at the University of Virginia, working on Neural Integral Control Barrier Functions for nonlinear systems. Control Barrier Functions are a well established way to mathematically guarantee safety, but that guarantee depends on knowing the system's exact dynamics, which is rarely true for real systems with unknown, nonlinear behavior.
+
+My work used Neural ODEs to recover the system dynamics from trajectories, imitation learning over an NMPC to build the controller, and a neural network trained on labeled safe and unsafe states to approximate the barrier function itself. Partway through, I ran into a problem that reframed how I think about safety: labeling a state as geometrically "safe" doesn't tell you whether the system will stay safe as it evolves over time. I ended up developing a forward-invariance aware labeling approach to account for this, and evaluated the resulting safety filter through closed loop simulations.
+
+> Treat "it works in this scenario" as the beginning of a question rather than the end of one.
+
+That project taught me to be suspicious of my own assumptions.
+
+## The shape of the problem
+
+Between these two projects, I now see the shape of the problem I want to spend a PhD on.
+
+- Learning based approaches - deep learning and reinforcement learning - are good at handling complexity and adapting to messy inputs, but they become unpredictable outside their training distribution.
+- Model based safety methods like CBFs can offer real guarantees, but only when you already know the dynamics, which real autonomous systems rarely hand you cleanly.
+- Almost nobody has cleanly combined the two, and testing any combined approach honestly requires rare, adversarial, and unseen scenarios that are hard to generate and harder to trust.
+
+I plan to approach this in stages: build and stress test methods in simulation first, where rare and dangerous scenarios can be created safely and repeatedly, then move toward evaluation under more realistic conditions. My background in CARLA, behavior cloning, collision avoidance, and Neural Integral Control Barrier Functions gives me a working foundation for exactly this kind of study, one that treats theoretical analysis and simulation experiments as two halves of the same investigation rather than separate tracks.
+
+## Where I'm headed
+
+I'm looking for an environment where I can be trained to find the real research problem inside a messy system, not just apply an existing method to a new dataset, and where I'll have the intellectual independence to sit with a hard problem long enough to actually solve it rather than work around it.
+
+Ten to fifteen years from now, I want to be running my own lab as a professor, working on trustworthy autonomous systems and mentoring the next set of researchers through exactly the kind of steep learning curve Dr. Kala walked me through. If autonomous systems are ever going to be trusted with the parts of our lives that actually matter, someone has to figure out how they behave when nothing looks like what they were trained on. I want that to be my problem to solve.

@@ -1,25 +1,28 @@
-// Brand + navigation. Text values live in site-settings.json (editable in /keystatic).
+// Identity + navigation. Text values live in site-settings.json.
 import settings from './site-settings.json';
 
 export const site = {
   ...settings,
-  url: 'https://runlog.example.com',
-  secondary: { label: 'See the Pro demo', href: 'https://runlog-astro.pages.dev' },
-  pro: 'https://runlog-astro.pages.dev',
+  url: 'https://rajvamsi12.github.io',
+  github: 'https://github.com/rajvamsi12',
+  linkedin: 'https://linkedin.com/in/rajvamsi-dasari9880',
   nav: [
-    { label: 'Product', href: '/#how' },
-    { label: 'Blog', href: '/blog' },
-    { label: 'Pro version', href: 'https://runlog-astro.pages.dev' },
+    { label: 'Research', href: '/#research' },
+    { label: 'Experience', href: '/#experience' },
+    { label: 'Publications', href: '/#publications' },
+    { label: 'Writing', href: '/blog' },
   ],
   menu: [
-    { label: 'Product', href: '/#how' },
-    { label: 'Blog', href: '/blog' },
-    { label: 'Get Runlog Pro', href: 'https://contra.com/products/QETiOjxd-runlog-pro-ai-agent-and-dev-tool-saa-s-astro-theme' },
+    { label: 'Research', href: '/#research' },
+    { label: 'Experience', href: '/#experience' },
+    { label: 'Publications', href: '/#publications' },
+    { label: 'Writing', href: '/blog' },
+    { label: 'Contact', href: '/#contact' },
   ],
   footer: [
-    { title: 'Theme', links: [['Home', '/'], ['Blog', '/blog'], ['Runlog Pro', 'https://runlog-astro.pages.dev']] },
-    { title: 'Pro adds', links: [['Pricing page', 'https://runlog-astro.pages.dev/pricing'], ['Docs', 'https://runlog-astro.pages.dev/docs/quickstart'], ['Changelog', 'https://runlog-astro.pages.dev/changelog'], ['Contact + Thank you', 'https://runlog-astro.pages.dev/contact']] },
-    { title: 'Also in Pro', links: [['Keystatic CMS', 'https://runlog-astro.pages.dev'], ['Figma file', 'https://runlog-astro.pages.dev']] },
-    { title: 'Made by', links: [['Pavlo Zhydkykh', 'https://pzhydkykh.com']] },
+    { title: 'Site', links: [['Research', '/#research'], ['Experience', '/#experience'], ['Publications', '/#publications'], ['Writing', '/blog']] },
+    { title: 'Elsewhere', links: [['GitHub', 'https://github.com/rajvamsi12'], ['LinkedIn', 'https://linkedin.com/in/rajvamsi-dasari9880'], ['Email', 'mailto:dasarirajvamsi@gmail.com']] },
+    { title: 'Code', links: [['agile-nicbf', 'https://github.com/rajvamsi12/agile-nicbf'], ['real2sim-trajectory-style-transfer', 'https://github.com/rajvamsi12/real2sim-trajectory-style-transfer']] },
+    { title: 'Files', links: [['CV (PDF)', '/Raj_Vamsi_CV.pdf'], ['Research statement', '/blog/research-statement']] },
   ],
 } as const;
