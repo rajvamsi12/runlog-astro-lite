@@ -5,14 +5,15 @@ import Logo from './Logo.astro';
 const path = Astro.url.pathname;
 ---
 
-<header class="border-b border-rule bg-canvas">
-  <nav class="mx-auto max-w-[680px] flex items-center gap-6 h-14 px-5" aria-label="Main">
+<header class="sticky top-0 z-50 border-b border-rule bg-canvas">
+  <nav class="frame flex items-center gap-7 h-14 px-6 max-md:px-5 max-md:gap-4" aria-label="Main">
     <Logo />
-    <ul class="ml-auto flex gap-5 text-[13px]">
+    <ul class="ml-auto flex gap-6 text-[13px] max-md:gap-4">
       {site.nav.map((l) => (
-        <li><a href={l.href} class:list={['hover:text-ink', path.startsWith(l.href) && l.href !== '/' ? 'text-ink' : 'text-steel']}>{l.label}</a></li>
+        <li class:list={[l.mobile === false && 'max-sm:hidden']}><a href={l.href} class:list={['hover:text-ink', path.startsWith(l.href) && l.href !== '/' ? 'text-ink' : 'text-steel']}>{l.label}</a></li>
       ))}
     </ul>
-    <div class="max-sm:hidden"><ThemeSwitcher /></div>
+    <div class="max-md:hidden"><ThemeSwitcher /></div>
+    <a href={site.cta.href} class="btn btn-primary btn-s">{site.cta.label}</a>
   </nav>
 </header>

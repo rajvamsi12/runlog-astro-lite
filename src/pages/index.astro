@@ -1,82 +1,182 @@
 ---
 import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
 import { site } from '../data/site';
+
+const glance = [
+  ['Now', 'Research intern, University of Virginia'],
+  ['Thesis', 'Real2Sim trajectory style transfer in CARLA'],
+  ['Interests', 'Safe control, imitation learning, autonomous driving'],
+  ['Looking for', 'PhD positions, Fall 2027'],
+];
 
 const experience = [
   {
-    when: '2026 - now',
+    when: 'May 2026 - now',
     title: 'Research Intern, University of Virginia',
-    body: 'Neural integral control barrier functions for safe control of unknown nonlinear systems. Extended the method to an F1TENTH racing model.',
+    project: 'Neural integral control barrier functions for unknown nonlinear systems',
     link: 'https://github.com/rajvamsi12/agile-nicbf',
+    points: [
+      'Implemented the full safety filter: Neural ODE dynamics, an imitation-learned policy, learned barriers and a QP with input constraints.',
+      'Forward-invariance-aware labeling cut closed-loop input-constraint violations from 0.80% to 0.00%.',
+      'On an F1TENTH racing model, reduced crashes on held-out tracks from 12/200 to 0/200.',
+    ],
   },
   {
-    when: '2025 - now',
+    when: 'Dec 2025 - now',
     title: 'M.Tech Thesis, ABV-IIITM Gwalior',
-    body: 'Real-to-sim trajectory style transfer: replaying Gwalior traffic in CARLA. Advised by Dr. Rahul Kala.',
+    project: 'Real2Sim trajectory style transfer in CARLA, advised by Dr. Rahul Kala',
     link: 'https://github.com/rajvamsi12/real2sim-trajectory-style-transfer',
+    points: [
+      'Mapped real Gwalior traffic into CARLA Town10HD and curated 5,212 scenarios across 6 maneuvers.',
+      'Cut replay tracking error from 5.9 m to under 0.3 m with time-synchronized PID and road-aligned spawns.',
+    ],
   },
   {
-    when: '2024 - 2025',
+    when: 'Dec 2024 - Nov 2025',
     title: 'Research Intern, iHub-Data, IIIT Hyderabad',
-    body: 'Safety-aware synthetic scenario generation for Indian traffic and behavior cloning in CARLA.',
+    project: 'Safety-aware synthetic scenario generation for Indian traffic',
+    points: [
+      'Built spawn correction and TTC-based collision avoidance for real-to-sim scenes in CARLA.',
+      'Trained a SegFormer-B1 behavior cloning model on ~66,000 image-command pairs.',
+    ],
   },
+];
+
+const projects = [
+  ['Neural ICBF safety filter', 'Learned dynamics, barriers and a QP safety filter for an F1TENTH car.', 'https://github.com/rajvamsi12/agile-nicbf'],
+  ['Real2Sim in CARLA', 'Replaying lane-less Indian traffic as collision-free CARLA scenarios.', 'https://github.com/rajvamsi12/real2sim-trajectory-style-transfer'],
+  ['Sign language recognition', 'MediaPipe landmarks with a Transformer, 89.09% test accuracy.', ''],
 ];
 
 const papers = [
   ['While in London do as the Gwaliorites do: Style Transfer of Trajectories across Traffic Domains in Real-to-Sim', 'Under review, WAFR 2026'],
   ['GLAD-LAD: Gwalior LAneless Driving Large Altitude Dataset', 'Under review, Transportation Research Part C'],
 ];
+
+const honors = [
+  ['2025', 'Best B.Tech project of the year'],
+  ['2025', 'GATE Computer Science, AIR 2000 (top 1%)'],
+  ['2022', 'JEE Main, 99th percentile'],
+];
 ---
 
 <Base>
-  <div class="mx-auto max-w-[680px] px-5 pt-20 pb-24 max-md:pt-12">
-    <h1 class="text-[32px] max-md:text-[26px] font-bold tracking-[-0.03em] text-ink">Dasari Raj Vamsi</h1>
-    <div class="mt-6 space-y-4 text-[15px] leading-[1.7] text-steel">
-      <p>I'm an Integrated B.Tech + M.Tech student in Information Technology at ABV-IIITM Gwalior, currently a research intern at the University of Virginia.</p>
-      <p>I'm interested in how autonomous systems can act safely in situations they weren't trained for. Most of my work combines learning-based control with safety methods like control barrier functions, and tests it in simulation.</p>
-      <p>I'm applying for PhD programs starting Fall 2027.</p>
+  <!-- Intro -->
+  <Section top={false} inner="px-6 pt-20 pb-20 max-md:px-5 max-md:pt-12 max-md:pb-14 overflow-hidden" label="Intro">
+    <div class="grid-bg" style="--gx:80%;--gy:40%" aria-hidden="true"></div>
+    <div class="relative grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 items-end">
+      <div>
+        <p class="label"><b>[00]</b> about</p>
+        <h1 class="mt-5 text-[clamp(38px,5vw,60px)] leading-[1.02] font-bold tracking-[-0.045em] text-ink">Dasari Raj Vamsi</h1>
+        <p class="mt-6 max-w-[56ch] text-[15px] leading-[1.7] text-steel">I'm an Integrated B.Tech + M.Tech student at ABV-IIITM Gwalior and a research intern at the University of Virginia. I work on making autonomous systems behave safely in situations they weren't trained for, mostly by combining learning-based control with control barrier functions and testing it in simulation.</p>
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+          <a href={`mailto:${site.email}`} class="btn btn-primary max-md:w-full">Email me</a>
+          <a href={site.cta.href} class="btn btn-ghost max-md:w-full">CV</a>
+          <a href={site.github} class="link text-[14px]">GitHub</a>
+          <a href={site.linkedin} class="link text-[14px]">LinkedIn</a>
+        </div>
+      </div>
+      <dl class="border border-ink bg-canvas text-[13px]">
+        {glance.map(([k, v]) => (
+          <div class="grid grid-cols-[110px_1fr] gap-4 px-5 py-3.5 border-b border-rule last:border-b-0">
+            <dt class="label">{k}</dt>
+            <dd class="text-ink">{v}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
-    <p class="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[14px]">
-      <a href={`mailto:${site.email}`} class="link">Email</a>
-      <a href={site.github} class="link">GitHub</a>
-      <a href={site.linkedin} class="link">LinkedIn</a>
-      <a href={site.cta.href} class="link">CV</a>
-    </p>
+  </Section>
 
-    <h2 id="research" class="mt-16 text-[13px] uppercase tracking-[0.08em] text-smoke">Research</h2>
-    <ul class="mt-5 space-y-7">
-      {experience.map((e) => (
-        <li>
-          <p class="flex flex-wrap items-baseline justify-between gap-x-4">
-            <span class="text-[15px] font-bold text-ink">{e.title}</span>
-            <span class="text-[13px] text-smoke tabular-nums">{e.when}</span>
-          </p>
-          <p class="mt-1.5 text-[14px] leading-[1.65] text-steel">
-            {e.body}
-            {e.link && <> <a href={e.link} class="link">Code</a></>}
-          </p>
-        </li>
-      ))}
-    </ul>
+  <!-- Research -->
+  <Section id="research" label="Research">
+    <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-8">
+      <p class="label"><b>[01]</b> research</p>
+      <ol class="border-t border-rule">
+        {experience.map((e) => (
+          <li class="py-7 border-b border-rule">
+            <p class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <span class="text-[17px] font-bold tracking-[-0.015em] text-ink">{e.title}</span>
+              <span class="text-[13px] text-smoke tabular-nums">{e.when}</span>
+            </p>
+            <p class="mt-1.5 text-[14px] text-steel">{e.project}{e.link && <> · <a href={e.link} class="link">code</a></>}</p>
+            <ul class="mt-4 space-y-2 text-[14px] leading-[1.6] text-steel max-w-[72ch]">
+              {e.points.map((p) => <li class="flex gap-3"><span class="text-smoke shrink-0">+</span><span>{p}</span></li>)}
+            </ul>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </Section>
 
-    <h2 id="publications" class="mt-16 text-[13px] uppercase tracking-[0.08em] text-smoke">Publications</h2>
-    <ul class="mt-5 space-y-5">
-      {papers.map(([t, v]) => (
-        <li>
-          <p class="text-[14px] leading-[1.55] text-ink">{t}</p>
-          <p class="mt-1 text-[13px] text-smoke">{v}</p>
-        </li>
-      ))}
-    </ul>
+  <!-- Projects -->
+  <Section id="projects" label="Projects">
+    <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-8">
+      <p class="label"><b>[02]</b> projects</p>
+      <ul class="grid grid-cols-1 md:grid-cols-3 border-t border-l border-rule">
+        {projects.map(([t, b, href]) => {
+          const Tag = href ? 'a' : 'div';
+          return (
+            <li class="border-r border-b border-rule">
+              <Tag href={href || undefined} class:list={['group flex h-full flex-col gap-3 p-5', href && 'hover:bg-tint']}>
+                <span class="text-[15px] font-bold text-ink group-hover:underline underline-offset-4">{t}</span>
+                <span class="text-[13px] leading-[1.55] text-steel">{b}</span>
+                {href && <span class="mt-auto pt-2 text-[12px] text-smoke">github -&gt;</span>}
+              </Tag>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </Section>
 
-    <h2 class="mt-16 text-[13px] uppercase tracking-[0.08em] text-smoke">Education</h2>
-    <p class="mt-5 flex flex-wrap items-baseline justify-between gap-x-4">
-      <span class="text-[15px] font-bold text-ink">ABV-IIITM Gwalior</span>
-      <span class="text-[13px] text-smoke tabular-nums">2022 - 2027</span>
-    </p>
-    <p class="mt-1.5 text-[14px] text-steel">Integrated B.Tech + M.Tech, Information Technology. CGPA 8.73/10.</p>
+  <!-- Publications -->
+  <Section id="publications" label="Publications">
+    <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-8">
+      <p class="label"><b>[03]</b> publications</p>
+      <ul class="border-t border-rule">
+        {papers.map(([t, v]) => (
+          <li class="py-5 border-b border-rule">
+            <p class="text-[15px] leading-[1.5] text-ink">{t}</p>
+            <p class="mt-1.5 text-[13px] text-smoke">{v}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Section>
 
-    <h2 class="mt-16 text-[13px] uppercase tracking-[0.08em] text-smoke">Writing</h2>
-    <p class="mt-5 text-[14px]"><a href="/blog/research-statement" class="link">Research statement</a></p>
-  </div>
+  <!-- Education + honors -->
+  <Section label="Education">
+    <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-8">
+      <p class="label"><b>[04]</b> education</p>
+      <div>
+        <p class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <span class="text-[17px] font-bold tracking-[-0.015em] text-ink">ABV-IIITM Gwalior</span>
+          <span class="text-[13px] text-smoke tabular-nums">2022 - 2027</span>
+        </p>
+        <p class="mt-1.5 text-[14px] text-steel">Integrated B.Tech + M.Tech, Information Technology. CGPA 8.73/10.</p>
+        <ul class="mt-8 border-t border-rule">
+          {honors.map(([y, t]) => (
+            <li class="grid grid-cols-[60px_1fr] gap-4 py-3.5 border-b border-rule text-[14px]">
+              <span class="text-smoke tabular-nums">{y}</span><span class="text-ink">{t}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </Section>
+
+  <!-- Contact -->
+  <Section id="contact" mode="invert" inner="px-6 py-20 max-md:px-5 max-md:py-14" label="Contact">
+    <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-6">
+      <p class="label"><b>[05]</b> contact</p>
+      <div>
+        <p class="text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.03em] text-ink">Happy to talk about research.</p>
+        <p class="mt-4 text-[15px] text-steel">
+          <a href={`mailto:${site.email}`} class="link">{site.email}</a>
+          <span class="text-smoke"> · </span><a href="/blog/research-statement" class="link">Research statement</a>
+        </p>
+      </div>
+    </div>
+  </Section>
 </Base>

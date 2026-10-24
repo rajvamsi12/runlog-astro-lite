@@ -3,8 +3,12 @@ import { site } from '../data/site';
 ---
 
 <footer class="border-t border-rule">
-  <p class="mx-auto max-w-[680px] px-5 py-8 text-[12px] text-smoke flex flex-wrap justify-between gap-3">
+  <p class="frame px-6 py-8 max-md:px-5 text-[12px] text-smoke flex flex-wrap justify-between gap-3">
     <span>&copy; {new Date().getFullYear()} Dasari Raj Vamsi</span>
-    <a href={`mailto:${site.email}`} class="hover:text-ink">{site.email}</a>
+    <span class="flex gap-5">
+      <a href={site.github} class="hover:text-ink">GitHub</a>
+      <a href={site.linkedin} class="hover:text-ink">LinkedIn</a>
+      <a href={`mailto:${site.email}`} class="hover:text-ink">Email</a>
+    </span>
   </p>
 </footer>

@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
 import { site } from '../../data/site';
 
 export async function getStaticPaths() {
@@ -17,9 +18,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline:
 
 <Base title={post.data.title} description={post.data.excerpt} type="article">
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(ld)} />
-  <article class="mx-auto max-w-[680px] px-5 pt-20 pb-24 max-md:pt-12">
+  <Section top={false} inner="px-5 pt-20 pb-24 max-md:pt-12"><article class="mx-auto max-w-[680px]">
     <h1 class="text-[28px] max-md:text-[24px] leading-[1.2] font-bold tracking-[-0.03em] text-ink">{post.data.title}</h1>
     <p class="mt-3 text-[13px] text-smoke">{fmt(post.data.date)}</p>
     <div class="prose-runlog mt-10 !text-[15px]"><Content /></div>
-  </article>
+  </article></Section>
 </Base>

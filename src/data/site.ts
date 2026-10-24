@@ -1,6 +1,8 @@
 // Identity + navigation. Text values live in site-settings.json.
 import settings from './site-settings.json';
 
+type NavLink = { label: string; href: string; mobile?: boolean };
+
 export const site = {
   ...settings,
   url: 'https://rajvamsi12.github.io',
@@ -8,7 +10,7 @@ export const site = {
   linkedin: 'https://linkedin.com/in/rajvamsi-dasari9880',
   nav: [
     { label: 'Research', href: '/#research' },
+    { label: 'Projects', href: '/#projects', mobile: false },
     { label: 'Writing', href: '/blog' },
-    { label: 'CV', href: '/Raj_Vamsi_CV.pdf' },
-  ],
-} as const;
+  ] as NavLink[],
+};
