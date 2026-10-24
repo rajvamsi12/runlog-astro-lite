@@ -1,0 +1,61 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+  return projects.map((p, i) => ({ params: { slug: p.id }, props: { project: p, next: projects[(i + 1) % projects.length] } }));
+}
+
+const { project, next } = Astro.props;
+const { Content } = await render(project);
+const d = project.data;
+---
+
+<Base title={d.title} description={d.summary} image={d.cover}>
+  <Section top={false} inner="px-6 pt-14 pb-12 max-md:px-5 max-md:pt-10 max-md:pb-8 overflow-hidden" label="Project header">
+    <div class="grid-bg" style="--gx:85%;--gy:30%" aria-hidden="true"></div>
+    <div class="relative">
+      <p class="text-[12px] text-smoke"><a href="/#projects" class="hover:text-ink">Projects</a> / {d.where}</p>
+      <h1 class="mt-5 max-w-[24ch] text-[clamp(30px,4.2vw,48px)] leading-[1.08] font-bold tracking-[-0.04em] text-ink">{d.title}</h1>
+      <p class="mt-5 max-w-[62ch] text-[16px] max-md:text-[15px] leading-[1.6] text-steel">{d.summary}</p>
+      <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px]">
+        <span class="pill border border-rule text-steel">{d.period}</span>
+        {d.repo && <a href={d.repo} class="btn btn-ghost btn-s">Code on GitHub</a>}
+      </div>
+    </div>
+  </Section>
+
+  <Section label="Project">
+    <div class="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,720px)] gap-x-12 gap-y-8">
+      <aside class="lg:sticky lg:top-20 h-fit">
+        {d.facts.length > 0 && (
+          <dl class="border-t border-rule max-lg:grid max-lg:grid-cols-2 max-lg:gap-x-6">
+            {d.facts.map(([k, v]) => (
+              <div class="py-3 border-b border-rule">
+                <dt class="label">{k}</dt>
+                <dd class="mt-1 text-[16px] font-bold text-cta tracking-[-0.02em]">{v}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </aside>
+      <div class="prose-runlog min-w-0 !text-[15px]"><Content /></div>
+    </div>
+  </Section>
+
+  <Section label="Next">
+    <div class="flex flex-wrap items-center justify-between gap-6">
+      <a href={`/projects/${next.id}`} class="group">
+        <span class="label">next project</span>
+        <span class="mt-2 block text-[20px] font-bold tracking-[-0.02em] text-ink group-hover:underline underline-offset-4">{next.data.title} -&gt;</span>
+      </a>
+      <span class="flex gap-5 text-[14px]">
+        <a href={`mailto:${site.email}`} class="link">Email me</a>
+        <a href={site.cta.href} class="link">CV</a>
+      </span>
+    </div>
+  </Section>
+</Base>

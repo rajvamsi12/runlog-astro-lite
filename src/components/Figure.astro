@@ -1,0 +1,12 @@
+---
+// Bordered image or video with a caption, for project pages. Pass `video` for an .mp4, `src` for an image.
+interface Props { src?: string; video?: string; poster?: string; alt?: string; caption?: string }
+const { src, video, poster, alt = '', caption } = Astro.props;
+---
+
+<figure class="!my-8 border border-ink bg-canvas">
+  {video
+    ? <video src={video} poster={poster} controls muted playsinline preload="metadata" class="block w-full h-auto"></video>
+    : <img src={src} alt={alt} loading="lazy" class="block w-full h-auto !border-0" />}
+  {caption && <figcaption class="px-4 py-3 border-t border-ink bg-tint text-[12px] leading-[1.55] text-steel">{caption}</figcaption>}
+</figure>

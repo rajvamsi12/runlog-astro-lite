@@ -1,7 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
+import { getCollection } from 'astro:content';
 import { site } from '../data/site';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 
 const glance = [
   ['Now', 'Research intern, University of Virginia'],
@@ -16,6 +19,7 @@ const experience = [
     title: 'Research Intern, University of Virginia',
     project: 'Neural integral control barrier functions for unknown nonlinear systems',
     link: 'https://github.com/rajvamsi12/agile-nicbf',
+    page: '/projects/neural-icbf',
     points: [
       'Implemented the full safety filter: Neural ODE dynamics, an imitation-learned policy, learned barriers and a QP with input constraints.',
       'Forward-invariance-aware labeling cut closed-loop input-constraint violations from 0.80% to 0.00%.',
@@ -27,6 +31,7 @@ const experience = [
     title: 'M.Tech Thesis, ABV-IIITM Gwalior',
     project: 'Real2Sim trajectory style transfer in CARLA, advised by Dr. Rahul Kala',
     link: 'https://github.com/rajvamsi12/real2sim-trajectory-style-transfer',
+    page: '/projects/real2sim',
     points: [
       'Mapped real Gwalior traffic into CARLA Town10HD and curated 5,212 scenarios across 6 maneuvers.',
       'Cut replay tracking error from 5.9 m to under 0.3 m with time-synchronized PID and road-aligned spawns.',
@@ -43,11 +48,6 @@ const experience = [
   },
 ];
 
-const projects = [
-  ['Neural ICBF safety filter', 'Learned dynamics, barriers and a QP safety filter for an F1TENTH car.', 'https://github.com/rajvamsi12/agile-nicbf'],
-  ['Real2Sim in CARLA', 'Replaying lane-less Indian traffic as collision-free CARLA scenarios.', 'https://github.com/rajvamsi12/real2sim-trajectory-style-transfer'],
-  ['Sign language recognition', 'MediaPipe landmarks with a Transformer, 89.09% test accuracy.', ''],
-];
 
 const papers = [
   ['While in London do as the Gwaliorites do: Style Transfer of Trajectories across Traffic Domains in Real-to-Sim', 'Under review, WAFR 2026'],
@@ -88,10 +88,27 @@ const honors = [
     </div>
   </Section>
 
+
+  <!-- Research statement -->
+  <Section id="statement" label="Research statement">
+    <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-8">
+      <p class="label"><b>[01]</b> research statement</p>
+      <div class="max-w-[72ch]">
+        <p class="text-[clamp(19px,2vw,24px)] leading-[1.45] tracking-[-0.02em] text-ink">"The model had learned to drive well in every scenario I'd shown it. It just hadn't learned what to do when the world gave it something new."</p>
+        <p class="mt-5 text-[15px] leading-[1.7] text-steel">My research question is how to make autonomous systems take reliable decisions in situations and uncertainties they were never explicitly trained for. Learning-based methods handle messy inputs but become unpredictable outside their training data; model-based safety methods like control barrier functions give guarantees, but only when the dynamics are known. I want to combine the two and test them honestly on rare and unseen scenarios.</p>
+        <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <a href="/blog/research-statement" class="btn btn-ghost btn-s">Read the full statement</a>
+          <a href={`mailto:${site.email}`} class="link text-[14px]">Email</a>
+          <a href={site.cta.href} class="link text-[14px]">CV</a>
+        </div>
+      </div>
+    </div>
+  </Section>
+
   <!-- Research -->
   <Section id="research" label="Research">
     <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-8">
-      <p class="label"><b>[01]</b> research</p>
+      <p class="label"><b>[02]</b> research</p>
       <ol class="border-t border-rule">
         {experience.map((e) => (
           <li class="py-7 border-b border-rule">
@@ -99,7 +116,7 @@ const honors = [
               <span class="text-[17px] font-bold tracking-[-0.015em] text-ink">{e.title}</span>
               <span class="text-[13px] text-smoke tabular-nums">{e.when}</span>
             </p>
-            <p class="mt-1.5 text-[14px] text-steel">{e.project}{e.link && <> · <a href={e.link} class="link">code</a></>}</p>
+            <p class="mt-1.5 text-[14px] text-steel">{e.project}{e.page && <> · <a href={e.page} class="link">project page</a></>}{e.link && <> · <a href={e.link} class="link">code</a></>}</p>
             <ul class="mt-4 space-y-2 text-[14px] leading-[1.6] text-steel max-w-[72ch]">
               {e.points.map((p) => <li class="flex gap-3"><span class="text-smoke shrink-0">+</span><span>{p}</span></li>)}
             </ul>
@@ -112,20 +129,22 @@ const honors = [
   <!-- Projects -->
   <Section id="projects" label="Projects">
     <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-8">
-      <p class="label"><b>[02]</b> projects</p>
+      <p class="label"><b>[03]</b> projects</p>
       <ul class="grid grid-cols-1 md:grid-cols-3 border-t border-l border-rule">
-        {projects.map(([t, b, href]) => {
-          const Tag = href ? 'a' : 'div';
-          return (
-            <li class="border-r border-b border-rule">
-              <Tag href={href || undefined} class:list={['group flex h-full flex-col gap-3 p-5', href && 'hover:bg-tint']}>
-                <span class="text-[15px] font-bold text-ink group-hover:underline underline-offset-4">{t}</span>
-                <span class="text-[13px] leading-[1.55] text-steel">{b}</span>
-                {href && <span class="mt-auto pt-2 text-[12px] text-smoke">github -&gt;</span>}
-              </Tag>
-            </li>
-          );
-        })}
+        {projects.map((p) => (
+          <li class="border-r border-b border-rule">
+            <a href={`/projects/${p.id}`} class="group flex h-full flex-col hover:bg-tint">
+              {p.data.cover
+                ? <img src={p.data.cover} alt="" loading="lazy" class="aspect-[16/9] w-full object-cover border-b border-rule" />
+                : <span class="flex aspect-[16/9] items-center justify-center border-b border-rule bg-tint text-[12px] text-smoke">{p.data.where}</span>}
+              <span class="flex flex-1 flex-col gap-2 p-5">
+                <span class="text-[15px] font-bold text-ink group-hover:underline underline-offset-4">{p.data.title.split(' - ')[0]}</span>
+                <span class="text-[13px] leading-[1.55] text-steel">{p.data.title.split(' - ')[1] ?? p.data.summary}</span>
+                <span class="mt-auto pt-2 text-[12px] text-smoke">{p.data.period} · read more -&gt;</span>
+              </span>
+            </a>
+          </li>
+        ))}
       </ul>
     </div>
   </Section>
@@ -133,7 +152,7 @@ const honors = [
   <!-- Publications -->
   <Section id="publications" label="Publications">
     <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-8">
-      <p class="label"><b>[03]</b> publications</p>
+      <p class="label"><b>[04]</b> publications</p>
       <ul class="border-t border-rule">
         {papers.map(([t, v]) => (
           <li class="py-5 border-b border-rule">
@@ -148,7 +167,7 @@ const honors = [
   <!-- Education + honors -->
   <Section label="Education">
     <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-8">
-      <p class="label"><b>[04]</b> education</p>
+      <p class="label"><b>[05]</b> education</p>
       <div>
         <p class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <span class="text-[17px] font-bold tracking-[-0.015em] text-ink">ABV-IIITM Gwalior</span>
@@ -169,7 +188,7 @@ const honors = [
   <!-- Contact -->
   <Section id="contact" mode="invert" inner="px-6 py-20 max-md:px-5 max-md:py-14" label="Contact">
     <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-6">
-      <p class="label"><b>[05]</b> contact</p>
+      <p class="label"><b>[06]</b> contact</p>
       <div>
         <p class="text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.03em] text-ink">Happy to talk about research.</p>
         <p class="mt-4 text-[15px] text-steel">

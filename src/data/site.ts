@@ -11,6 +11,6 @@ export const site = {
   nav: [
     { label: 'Research', href: '/#research' },
     { label: 'Projects', href: '/#projects', mobile: false },
-    { label: 'Writing', href: '/blog' },
+    { label: 'Statement', href: '/blog/research-statement' },
   ] as NavLink[],
 };

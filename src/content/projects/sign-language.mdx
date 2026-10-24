@@ -1,0 +1,30 @@
+---
+title: Continuous sign language recognition
+summary: Translating whole signed sentences from video, not just single signs, using body and hand landmarks and a Transformer.
+period: Course project
+where: ABV-IIITM Gwalior
+order: 3
+facts:
+  - ['Test accuracy', '89.09%']
+  - ['BLEU', '0.8593']
+  - ['Sentence classes', '136']
+---
+
+## The problem
+
+Most sign language models recognize one sign at a time. Real signing is continuous: signs run into each other inside a sentence.
+
+## How it works
+
+1. **Landmarks, not pixels.** MediaPipe Holistic extracts 225 pose and hand landmark values from every frame, so the model sees how the body moves rather than the background.
+2. **Fixed-length sequences.** Each video becomes a sequence of landmark frames of the same length.
+3. **Sequence models.** I trained a BiLSTM and a Transformer to map each sequence to its sentence.
+
+The data had 2,703 videos across 136 sentence classes.
+
+## Results
+
+| Model | Test accuracy |
+| --- | --- |
+| BiLSTM | 78.93% |
+| **Transformer** | **89.09%** (BLEU 0.8593) |

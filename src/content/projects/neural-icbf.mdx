@@ -1,0 +1,64 @@
+---
+title: Neural ICBF - a learned safety filter for a racing car
+summary: Safety guarantees in control usually assume you know the system's exact equations. I built a safety filter that learns everything it needs from data, then tested it on a simulated F1TENTH race car weaving through obstacles.
+period: May 2026 - now
+where: Research internship, University of Virginia
+order: 2
+repo: https://github.com/rajvamsi12/agile-nicbf
+cover: /projects/neural-icbf/racing-demo.jpg
+facts:
+  - ['Unsafe runs @ 4 m/s', '12 -> 0 of 200']
+  - ['Filter time', '7-8 ms / step']
+  - ['Constraint violations', '0.80% -> 0.00%']
+  - ['p-value', '0.0005']
+---
+import Figure from '../../components/Figure.astro';
+
+<Figure video="/projects/neural-icbf/racing-demo.mp4" poster="/projects/neural-icbf/racing-demo.jpg" caption="Demo from the 6 m/s racing experiments. Top: the car (green) on a 4 m wide track with obstacles (red). Bottom: speed, steering, clearance to the nearest obstacle, acceleration and the barrier value, which must stay above 0." />
+
+## The problem
+
+A control barrier function (CBF) is a way to prove a robot stays safe: it defines a safe region and blocks any action that would leave it. The catch is that it needs the robot's exact equations of motion. Real systems rarely come with those.
+
+## The idea
+
+Learn every missing piece from data, then keep the one part that gives the guarantee - a small optimization that minimally corrects the controller's action - exactly as it is.
+
+## How it works
+
+The filter runs once per control step:
+
+1. **Learned dynamics.** A Neural ODE, trained on recorded trajectories, predicts how the system moves.
+2. **Learned controller.** A policy imitates an expensive optimal controller (NMPC) so it runs fast.
+3. **Learned barrier.** A network trained on safe and unsafe examples scores how safe a state is.
+4. **Safety filter.** A quadratic program (QP) picks the action closest to the controller's that keeps the barrier positive and respects the car's limits.
+
+## The insight: labels have to look ahead
+
+To train the barrier you label states as safe or unsafe. My first labels just checked whether a state was inside the safe region. That was wrong: some states are inside it but already doomed, because no allowed action can stop the system from leaving.
+
+I changed the labels to check whether *some* allowed action keeps the system safe over time. This relabeled 28.95% of the training data as unsafe and brought input-constraint violations in closed loop from 0.80% to 0.00%.
+
+## Racing
+
+Then I pushed it to something harder: a 6-dimensional model of an F1TENTH car with tire grip limits, steering rate limits and motor lag, racing a 50 m track full of obstacles. The learned dynamics predict 1 second ahead with a median error of 8.5 cm.
+
+Results on 200 obstacle layouts never used during development, at 4.0 m/s:
+
+| Method | Success | Unsafe (crash or off track) |
+| --- | --- | --- |
+| Planner alone (MPPI) | 84.0% | 12 of 200 |
+| Analytical HOCBF-QP | 27.5% | 70 of 200 |
+| **Neural ICBF + planner** | **84.5%** | **0 of 200** |
+
+The gain is in safety, not success: the success rate is about the same as the planner alone, and most remaining failures are the car stopping in front of an obstacle, not crashing.
+
+<Figure src="/projects/neural-icbf/friction-circle.jpg" alt="Two scatter plots of commanded accelerations against a friction circle" caption="Accelerations commanded by the planner alone (left) and after the safety filter (right). The red circle is the tire's grip limit." />
+
+## Where it breaks, and the fix
+
+Near the grip limit the front tires saturate, and steering stops working the way a one-step filter assumes - it can even make things worse. I found this failure and built a sampling-based predictive filter that looks further ahead. At 6 m/s it reaches 90-93% success with zero crashes.
+
+## Paper
+
+This work is part of a co-authored ACC paper on neural integral control barrier functions for unknown nonlinear systems with input constraints. I also derived a closed-form bound showing the integral control law tracks the learned policy.

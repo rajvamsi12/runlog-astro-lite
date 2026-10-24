@@ -1,0 +1,58 @@
+---
+title: Real2Sim - replaying Gwalior traffic in CARLA
+summary: Indian traffic doesn't follow lanes, and simulators aren't built for it. I take real drone recordings of a busy Gwalior junction and replay every vehicle inside the CARLA simulator, so driving policies can learn from and be tested on how people actually drive here.
+period: Dec 2025 - now
+where: M.Tech thesis, ABV-IIITM Gwalior
+order: 1
+repo: https://github.com/rajvamsi12/real2sim-trajectory-style-transfer
+cover: /projects/real2sim/drone-vs-carla.jpg
+facts:
+  - ['Scenarios curated', '5,212']
+  - ['Collision-free', '2,912']
+  - ['Tracking error', '5.9 m -> 0.3 m']
+  - ['Advisor', 'Dr. Rahul Kala']
+---
+import Figure from '../../components/Figure.astro';
+
+<Figure video="/projects/real2sim/drone-vs-carla.mp4" poster="/projects/real2sim/drone-vs-carla.jpg" caption="Left: real drone footage of a Gwalior junction. Right: the same vehicles replayed in CARLA Town10HD with physics on. Ten 8-second clips: cut-in, cut-out, U-turn, overtaking left and right, vehicle following. The CARLA view is mirrored because Indian traffic drives on the left." />
+
+## The problem
+
+Most self-driving research is trained and tested on structured, right-hand traffic: clear lanes, predictable merges. A junction in Gwalior has none of that. Auto-rickshaws cut across, bikes squeeze through gaps, cars overtake on either side.
+
+A policy that has never seen this will fail on it. I saw that first-hand when a behavior cloning model I'd trained drove straight into a parked auto-rickshaw in simulation. To train and test on real Indian driving, I needed that driving inside a simulator.
+
+## The idea
+
+Record real traffic from a drone, track every vehicle, and replay those exact trajectories in CARLA. Then the simulator holds real behavior, and any driving policy can be dropped in next to it.
+
+## How it works
+
+1. **Map the real junction onto a CARLA map.** I split the junction into 6 regions (each approach road) plus the center, and calibrated each region separately onto Town10HD.
+2. **Spawn matching vehicles.** Each real vehicle gets a CARLA blueprint of similar size, placed aligned with the road.
+3. **Replay with physics.** A time-synchronized PID controller drives each CARLA vehicle along its real path.
+4. **Catch collisions before simulating.** Small calibration errors can make vehicles overlap. An offline predictor screens about 5,000 scenarios in roughly 2 minutes and flags the ones that would collide.
+5. **Repair what can be repaired.** Overlapping vehicles are nudged apart along their own paths, within fixed limits.
+
+<Figure src="/projects/real2sim/real_world_6_regions.jpg" alt="Drone view of the Gwalior junction with 6 colored regions" caption="The real junction from the drone, split into 6 calibrated regions and a center." />
+
+<Figure src="/projects/real2sim/carla_map_6_regions.jpg" alt="CARLA Town10HD with the same 6 regions" caption="The same 6 regions mapped onto CARLA Town10HD." />
+
+## Results
+
+| | Result |
+| --- | --- |
+| Candidate scenarios | 26,868 |
+| Valid scenarios, across 6 maneuvers | 5,212 |
+| Replay tracking error | 5.9 m -> under 0.3 m |
+| Collision predictor, CARLA validation | caught 20 of 20 failures |
+| Scenarios rescued by separating vehicles | 653 |
+| Collision-free scenarios in total | 2,912 |
+
+## What's next
+
+A multi-modal imitation-learning driver trained on these scenarios is in progress. This line of work is also the basis of a paper under review at WAFR 2026.
+
+## Where it started
+
+Before the thesis, during my iHub-Data (IIIT Hyderabad) internship, I built the first version: spawn correction, time-to-collision based emergency braking, and a SegFormer-B1 behavior cloning model trained on about 66,000 image-command pairs (0.69 m/s speed error, 4.89°/s steering error).
