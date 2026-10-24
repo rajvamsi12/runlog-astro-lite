@@ -55,4 +55,8 @@ A multi-modal imitation-learning driver trained on these scenarios is in progres
 
 ## Where it started
 
-Before the thesis, during my iHub-Data (IIIT Hyderabad) internship, I built the first version: spawn correction, time-to-collision based emergency braking, and a SegFormer-B1 behavior cloning model trained on about 66,000 image-command pairs (0.69 m/s speed error, 4.89°/s steering error).
+The thesis grew out of my iHub-Data (IIIT Hyderabad) internship and B.Tech project, [Drone to Ego](/projects/drone-to-ego). There I built the first version: drone scenes rebuilt in CARLA, spawn correction, time-to-collision based collision avoidance, and a SegFormer-B1 behavior cloning model trained on about 66,000 image-command pairs (0.69 m/s speed error, 4.89°/s steering error).
+
+That project showed how much the data itself was holding the model back. The thesis rebuilds the pipeline around that: six calibrated regions instead of five, validated scenarios, and collisions caught before simulation instead of patched during it.
+
+[Read about Drone to Ego ->](/projects/drone-to-ego)

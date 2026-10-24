@@ -1,0 +1,76 @@
+---
+title: Drone to Ego - behavior cloning on Indian traffic
+summary: A behavior cloning model needs to see the road from the driver's seat, but our real Indian traffic data was filmed from a drone overhead. I rebuilt the drone scenes inside CARLA, rode along in each car with a camera, and used those views to train a model that predicts speed and steering.
+period: Dec 2024 - Nov 2025
+where: iHub-Data (IIIT Hyderabad) internship · B.Tech project
+order: 2
+repo: https://github.com/rajvamsi12/real2sim-trajectory-style-transfer
+cover: /projects/drone-to-ego/city-vs-ego.jpg
+facts:
+  - ['Image-command pairs', '~66,000']
+  - ['Speed error (RMSE)', '0.69 m/s']
+  - ['Steering error (RMSE)', '4.89°/s']
+  - ['Award', 'Best BTP 2025']
+  - ['Advisor', 'Dr. Rahul Kala']
+---
+import Figure from '../../components/Figure.astro';
+
+<Figure src="/projects/drone-to-ego/city-vs-ego.jpg" alt="Overhead view of a CARLA city next to a camera view from behind a car" caption="The same simulated world from two views: the city from above (left), which is what the drone data gives us, and the driver's view from a car (right), which is what a behavior cloning model needs." />
+
+This was the first version of what later became my [Real2Sim thesis](/projects/real2sim). It was a sponsored iHub-Data (IIIT Hyderabad) project at ABV-IIITM, and also my B.Tech project with Buddayepalli John Wesley, supervised by Dr. Rahul Kala. It won Best B.Tech Project of the year in 2025.
+
+## The problem
+
+Behavior cloning teaches a car to drive by copying a human: show it what the road looks like, and the speed and steering the driver used at that moment. So it needs camera images from inside the car, matched to controls.
+
+Our real data was a drone video of a crowded Gwalior junction, filmed from straight above. Good for tracking every vehicle, useless as a driver's-eye view. And the interesting moments - sudden cut-ins, bikes squeezing through, U-turns - are rare in any dataset.
+
+Why not just mount a camera on a car? Because one car only records what happens to it. The drone records every vehicle at once, so every car in the scene can become a training example.
+
+## The idea
+
+Turn every tracked vehicle into a driver. Rebuild the drone scene in CARLA, put a camera on each car, replay the real trajectories, and save what the camera sees together with that car's speed and steering.
+
+<Figure src="/projects/drone-to-ego/pipeline.jpg" alt="Flow chart from parsing data to capturing images and checking collisions" caption="The data engine: parse the drone tracks, connect to CARLA, replay each group of vehicles region by region, capture images and controls, and stop on collision or timeout." />
+
+## How it works
+
+1. **Clean the tracks.** Real tracks are noisy and broken in places. I cleaned and parsed them and filled gaps with time-based interpolation.
+2. **Map the junction onto CARLA.** Each approach road got its own affine transform from drone pixels to CARLA coordinates - five regions in this version (the thesis later moved to six).
+3. **Spawn the cars.** Vehicles that overlapped or spawned in the wrong place were corrected before the replay started.
+4. **Avoid collisions while replaying.** Small mapping errors mean replayed cars can drift into each other, so every car runs a time-to-collision check each step (below).
+5. **Record.** A camera on the ego car captures frames, saved with the car's speed and steering.
+6. **Find the rare cases.** Annotations of unusual events were sparse, so I clustered trajectories and their text descriptions to surface rare behaviors to replay.
+
+<Figure src="/projects/drone-to-ego/first-transition.jpg" alt="Top-down CARLA view of a junction with a red trajectory crossing it" caption="An early replay: a real vehicle's path (red) crossing the junction in CARLA." />
+
+## Collision avoidance with time-to-collision
+
+For two vehicles moving at constant velocity, with relative position `Δp` and relative velocity `Δv`, they are closest at time
+
+`t* = -(Δp · Δv) / |Δv|²`
+
+If `t*` is positive, the closest approach is still ahead. If the distance at that moment is inside a safety radius and `t*` is under a threshold, the car reacts: it brakes, or nudges sideways away from the threat while staying on the road. The sign of `to_threat · left` says which side the threat is on, so the car knows which way to move.
+
+<Figure src="/projects/drone-to-ego/nudge.jpg" alt="Diagram of an ego car nudging its path away from a nearby vehicle" caption="Lateral nudge: the ego car shifts its path away from the vehicle it is about to hit." />
+
+## The model
+
+The model is a SegFormer encoder (a vision transformer) with its segmentation head replaced by a small regression head that outputs speed and steering. I chose a simple head on purpose: the encoder already produces rich scene features, and a small head is less likely to overfit.
+
+<Figure src="/projects/drone-to-ego/ego-views.jpg" alt="Two camera views from cars driving in CARLA" caption="Driver's-eye frames captured during replay - the images the model learns from." />
+
+## Results
+
+| Stage | What we had |
+| --- | --- |
+| B.Tech presentation | Over 25,000 driver's-eye images from hundreds of replayed scenarios; model training still in progress |
+| End of internship | SegFormer-B1 trained on ~66,000 image-command pairs |
+| Speed prediction (test RMSE) | 0.69 m/s |
+| Steering prediction (test RMSE) | 4.89°/s |
+
+PID controllers for speed and steering turn the model's predictions into smooth driving inside CARLA.
+
+## What I learned
+
+This is where a policy I had trained drove straight into a parked auto-rickshaw. The model was good on the data it had seen and lost on anything new. The biggest lesson was that the quality and coverage of the data matter as much as the model - which is what the [Real2Sim thesis](/projects/real2sim) set out to fix, with calibrated regions, validated scenarios and collision checks before simulation.

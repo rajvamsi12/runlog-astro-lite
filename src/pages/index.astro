@@ -17,7 +17,7 @@ const experience = [
   {
     when: 'May 2026 - now',
     title: 'Research Intern, University of Virginia',
-    project: 'Neural integral control barrier functions for unknown nonlinear systems',
+    project: 'Neural integral control barrier functions for unknown nonlinear systems, mentored by Dr. Rohan Chandra',
     link: 'https://github.com/rajvamsi12/agile-nicbf',
     page: '/projects/neural-icbf',
     points: [
@@ -40,7 +40,9 @@ const experience = [
   {
     when: 'Dec 2024 - Nov 2025',
     title: 'Research Intern, iHub-Data, IIIT Hyderabad',
-    project: 'Safety-aware synthetic scenario generation for Indian traffic',
+    project: 'Drone-to-ego behavior cloning for Indian traffic, also my B.Tech project',
+    link: 'https://github.com/rajvamsi12/real2sim-trajectory-style-transfer',
+    page: '/projects/drone-to-ego',
     points: [
       'Built spawn correction and TTC-based collision avoidance for real-to-sim scenes in CARLA.',
       'Trained a SegFormer-B1 behavior cloning model on ~66,000 image-command pairs.',
@@ -130,7 +132,7 @@ const honors = [
   <Section id="projects" label="Projects">
     <div class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-x-12 gap-y-8">
       <p class="label"><b>[03]</b> projects</p>
-      <ul class="grid grid-cols-1 md:grid-cols-3 border-t border-l border-rule">
+      <ul class="grid grid-cols-1 md:grid-cols-2 border-t border-l border-rule">
         {projects.map((p) => (
           <li class="border-r border-b border-rule">
             <a href={`/projects/${p.id}`} class="group flex h-full flex-col hover:bg-tint">
