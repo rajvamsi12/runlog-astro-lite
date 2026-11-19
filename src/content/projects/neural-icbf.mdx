@@ -1,6 +1,6 @@
 ---
-title: Neural ICBF - a learned safety filter for a racing car
-summary: Safety guarantees in control usually assume you know the system's exact equations. I built a safety filter that learns everything it needs from data, then tested it on a simulated F1TENTH race car weaving through obstacles.
+title: Neural ICBF - a learned safety filter for agile collision avoidance
+summary: Safety guarantees in control usually assume you know the system's exact equations. I re-implemented a safety filter that learns everything it needs from data, then extended it to a simulated F1TENTH race car weaving through obstacles.
 period: May 2026 - now
 where: Research internship, University of Virginia · mentor Dr. Rohan Chandra
 order: 3
@@ -11,6 +11,7 @@ facts:
   - ['Filter time', '7-8 ms / step']
   - ['Constraint violations', '0.80% -> 0.00%']
   - ['p-value', '0.0005']
+  - ['Paper', 'L4DC 2027, first author']
   - ['Mentor', 'Dr. Rohan Chandra']
 ---
 import Figure from '../../components/Figure.astro';
@@ -23,7 +24,7 @@ A control barrier function (CBF) is a way to prove a robot stays safe: it define
 
 ## The idea
 
-Learn every missing piece from data, then keep the one part that gives the guarantee - a small optimization that minimally corrects the controller's action - exactly as it is.
+Neural integral control barrier functions (Neural ICBFs), introduced by Zinage, Chandra and Bakolas, learn every missing piece from data, then keep the one part that gives the guarantee - a small optimization that minimally corrects the controller's action - exactly as it is.
 
 ## How it works
 
@@ -58,8 +59,8 @@ The gain is in safety, not success: the success rate is about the same as the pl
 
 ## Where it breaks, and the fix
 
-Near the grip limit the front tires saturate, and steering stops working the way a one-step filter assumes - it can even make things worse. I found this failure and built a sampling-based predictive filter that looks further ahead. At 6 m/s it reaches 90-93% success with zero crashes.
+Near the grip limit the front tires saturate, and steering stops working the way a one-step filter assumes - it can even make things worse. I found this failure and built a sampling-based predictive filter that looks further ahead. At 6 m/s it reaches 90-93% success with zero unsafe runs.
 
 ## Paper
 
-This work is part of a co-authored ACC paper on neural integral control barrier functions for unknown nonlinear systems with input constraints. I also derived a closed-form bound showing the integral control law tracks the learned policy.
+The racing extension is my first-author paper, *Neural Integral Control Barrier Functions for Agile Collision Avoidance*, under review at L4DC 2027. I also derived a closed-form exponential bound showing how closely the integral control law tracks the imitation-learned policy.

@@ -17,24 +17,25 @@ const experience = [
   {
     when: 'May 2026 - now',
     title: 'Research Intern, University of Virginia',
-    project: 'Neural integral control barrier functions for unknown nonlinear systems, mentored by Dr. Rohan Chandra',
+    project: 'Neural ICBFs for agile collision avoidance (L4DC 2027, first author), mentored by Dr. Rohan Chandra',
     link: 'https://github.com/rajvamsi12/agile-nicbf',
     page: '/projects/neural-icbf',
     points: [
-      'Implemented the full safety filter: Neural ODE dynamics, an imitation-learned policy, learned barriers and a QP with input constraints.',
+      'Re-implemented the Neural ICBF safety filter from scratch: Neural ODE dynamics, an imitation-learned policy, learned barriers and a QP with input constraints.',
       'Forward-invariance-aware labeling cut closed-loop input-constraint violations from 0.80% to 0.00%.',
-      'On an F1TENTH racing model, reduced crashes on held-out tracks from 12/200 to 0/200.',
+      'On an F1TENTH racing model at 4 m/s, cut unsafe runs on held-out layouts from 12/200 to 0/200 with unchanged success.',
     ],
   },
   {
     when: 'Dec 2025 - now',
     title: 'M.Tech Thesis, ABV-IIITM Gwalior',
-    project: 'Real2Sim trajectory style transfer in CARLA, advised by Dr. Rahul Kala',
+    project: 'Real2Sim trajectory style transfer in CARLA (WAFR 2026, first author), advised by Dr. Rahul Kala',
     link: 'https://github.com/rajvamsi12/real2sim-trajectory-style-transfer',
     page: '/projects/real2sim',
     points: [
-      'Mapped real Gwalior traffic into CARLA Town10HD and curated 5,212 scenarios across 6 maneuvers.',
-      'Cut replay tracking error from 5.9 m to under 0.3 m with time-synchronized PID and road-aligned spawns.',
+      'Mapped drone-tracked Gwalior traffic into CARLA Town10HD: 1,191 collision-free scenarios, 10,854 recovery copies and 433,778 camera + LiDAR samples.',
+      'Trained a sensor-only imitation-learning driver and benchmarked it against IDM, CARLA Autopilot and constant velocity over 10 runs.',
+      'A TTC safety layer cut ego collisions from 31.0% to 1.4%; a probe showed the policy hasn\'t learned to brake yet.',
     ],
   },
   {
@@ -52,8 +53,9 @@ const experience = [
 
 
 const papers = [
-  ['While in London do as the Gwaliorites do: Style Transfer of Trajectories across Traffic Domains in Real-to-Sim', 'Under review, WAFR 2026'],
-  ['GLAD-LAD: Gwalior LAneless Driving Large Altitude Dataset', 'Under review, Transportation Research Part C'],
+  ['Neural Integral Control Barrier Functions for Agile Collision Avoidance', 'First author · Under review, L4DC 2027'],
+  ['While in London do as the Gwaliorites do: Style Transfer of Trajectories across Traffic Domains in Real-to-Sim', 'First author · Submitted, WAFR 2026'],
+  ['GLAD-LAD: Gwalior LAneless Driving Large Altitude Dataset', 'Co-author · Under review, Transportation Research Part C'],
 ];
 
 const honors = [

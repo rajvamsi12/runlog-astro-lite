@@ -5,7 +5,7 @@ type NavLink = { label: string; href: string; mobile?: boolean };
 
 export const site = {
   ...settings,
-  url: 'https://rajvamsi12.github.io',
+  url: 'https://rajvamsi.dev',
   github: 'https://github.com/rajvamsi12',
   linkedin: 'https://linkedin.com/in/rajvamsi-dasari9880',
   nav: [

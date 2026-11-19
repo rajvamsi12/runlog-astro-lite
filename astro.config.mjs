@@ -5,7 +5,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://rajvamsi12.github.io',
+  site: 'https://rajvamsi.dev',
   integrations: [mdx(), sitemap()],
   vite: { plugins: [tailwindcss()] },
 });

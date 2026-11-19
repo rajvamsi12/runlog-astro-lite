@@ -1,62 +1,79 @@
 ---
-title: Real2Sim - replaying Gwalior traffic in CARLA
-summary: Indian traffic doesn't follow lanes, and simulators aren't built for it. I take real drone recordings of a busy Gwalior junction and replay every vehicle inside the CARLA simulator, so driving policies can learn from and be tested on how people actually drive here.
+title: Real2Sim - teaching a car to drive like Gwalior traffic
+summary: Indian traffic doesn't follow lanes, and simulators aren't built for it. I replay real drone recordings of a busy Gwalior junction inside the CARLA simulator, then train an AI driver on them that sees only its own camera and LiDAR.
 period: Dec 2025 - now
 where: M.Tech thesis, ABV-IIITM Gwalior
 order: 1
 repo: https://github.com/rajvamsi12/real2sim-trajectory-style-transfer
-cover: /projects/real2sim/drone-vs-carla.jpg
+cover: /projects/real2sim/drone-vs-carla-rhd.jpg
 facts:
-  - ['Scenarios curated', '5,212']
-  - ['Collision-free', '2,912']
-  - ['Tracking error', '5.9 m -> 0.3 m']
+  - ['Collision-free scenarios', '1,191 + 10,854']
+  - ['Training samples', '433,778']
+  - ['Ego collisions with TTC', '31.0% -> 1.4%']
+  - ['Paper', 'WAFR 2026, first author']
   - ['Advisor', 'Dr. Rahul Kala']
 ---
 import Figure from '../../components/Figure.astro';
 
-<Figure video="/projects/real2sim/drone-vs-carla.mp4" poster="/projects/real2sim/drone-vs-carla.jpg" caption="Left: real drone footage of a Gwalior junction. Right: the same vehicles replayed in CARLA Town10HD with physics on. Ten 8-second clips: cut-in, cut-out, U-turn, overtaking left and right, vehicle following. The CARLA view is mirrored because Indian traffic drives on the left." />
+<Figure video="/projects/real2sim/drone-vs-carla-rhd.mp4" poster="/projects/real2sim/drone-vs-carla-rhd.jpg" caption="Left: real drone footage of a Gwalior junction. Right: the same vehicles replayed in CARLA Town10HD with physics on. India drives on the left and Town10HD on the right, so the scene is mirrored to match CARLA's lanes." />
 
 ## The problem
 
-Most self-driving research is trained and tested on structured, right-hand traffic: clear lanes, predictable merges. A junction in Gwalior has none of that. Auto-rickshaws cut across, bikes squeeze through gaps, cars overtake on either side.
+Most self-driving research is trained and tested on structured traffic: clear lanes, predictable merges. A junction in Gwalior has none of that. Auto-rickshaws cut across, bikes squeeze through gaps, cars overtake on either side.
 
 A policy that has never seen this will fail on it. I saw that first-hand when a behavior cloning model I'd trained drove straight into a parked auto-rickshaw in simulation. To train and test on real Indian driving, I needed that driving inside a simulator.
 
 ## The idea
 
-Record real traffic from a drone, track every vehicle, and replay those exact trajectories in CARLA. Then the simulator holds real behavior, and any driving policy can be dropped in next to it.
+Record real traffic from a drone, track every vehicle, and replay those exact trajectories in CARLA. Then use the replays to train an AI driver that has to drive from its own sensors, the way a real car would - and check whether it behaves like the Gwalior drivers it learned from.
 
-## How it works
+## Part 1: real traffic inside the simulator
 
-1. **Map the real junction onto a CARLA map.** I split the junction into 6 regions (each approach road) plus the center, and calibrated each region separately onto Town10HD.
+1. **Map the real junction onto a CARLA map.** I split the junction into 6 regions (each approach road) plus the center, and calibrated each region separately onto Town10HD. A corrected mapping mirrors left-hand traffic onto CARLA's right-hand lanes: 98.2% of moving steps now go with the CARLA lane, up from 3.9%.
 2. **Spawn matching vehicles.** Each real vehicle gets a CARLA blueprint of similar size, placed aligned with the road.
-3. **Replay with physics.** A time-synchronized PID controller drives each CARLA vehicle along its real path.
-4. **Catch collisions before simulating.** Small calibration errors can make vehicles overlap. An offline predictor screens about 5,000 scenarios in roughly 2 minutes and flags the ones that would collide.
-5. **Repair what can be repaired.** Overlapping vehicles are nudged apart along their own paths, within fixed limits.
+3. **Replay with physics.** A time-synchronized PID controller drives each vehicle along its real path. Tracking error dropped from 5.9 m to under 0.3 m.
+4. **Throw out bad data.** Drone tracking has glitches - speed jumps, heading flips, drift. A filter drops those scenarios, and an offline predictor flags the ones that would collide before CARLA ever runs them.
+5. **Make recovery examples.** Copies of each scenario add scene noise, shift the ego car off its path, or change its speed, so the driver also learns how to get back on track.
 
 <Figure src="/projects/real2sim/real_world_6_regions.jpg" alt="Drone view of the Gwalior junction with 6 colored regions" caption="The real junction from the drone, split into 6 calibrated regions and a center." />
 
 <Figure src="/projects/real2sim/carla_map_6_regions.jpg" alt="CARLA Town10HD with the same 6 regions" caption="The same 6 regions mapped onto CARLA Town10HD." />
 
+| Data | Result |
+| --- | --- |
+| Collision-free base scenarios (cut-in, cut-out, U-turn, overtaking, following) | 1,191 |
+| Collision-free recovery copies | 10,854 |
+| Recorded camera + LiDAR samples | 433,778 (119 GB) |
+
+## Part 2: an AI driver that learns from it
+
+The driver sees what a real car would: three recent front-camera frames, three LiDAR sweeps, its own speed and steering, and a route command. Camera features come from SegFormer and LiDAR features from PointPillars. A GRU decoder predicts the next 2.5 seconds of waypoints as corrections to a constant-velocity guess. I pick the checkpoint by how it drives in closed loop, not by its offline error.
+
+<Figure video="/projects/real2sim/ai-driver-00307.mp4" poster="/projects/real2sim/ai-driver-00307.jpg" caption="One test scenario (overtaking right), 8 s. Left: the real drone footage. Middle: the recorded driver replayed in CARLA. Right: my AI driver controls the ego car (green), with the TTC safety layer on every vehicle." />
+
 ## Results
 
-| | Result |
-| --- | --- |
-| Candidate scenarios | 26,868 |
-| Valid scenarios, across 6 maneuvers | 5,212 |
-| Replay tracking error | 5.9 m -> under 0.3 m |
-| Collision predictor, CARLA validation | caught 20 of 20 failures |
-| Scenarios rescued by separating vehicles | 653 |
-| Collision-free scenarios in total | 2,912 |
+I test every driver in closed loop on 114 test scenarios it has never seen, 10 runs each. "Behaviour kept" checks whether the ego still does what the real driver did - passes the same car on the same side, or keeps the same gap. A TTC (time-to-collision) safety layer brakes when a crash is predicted within 0.7 s.
+
+| Driver | Ego collisions | Behaviour kept |
+| --- | --- | --- |
+| Recorded driver (replayed) | 2.5% | 100% |
+| AI driver alone | 31.0% | 58.4% |
+| **AI driver + TTC** | **1.4%** | **62.0%** |
+| Constant velocity + TTC | 1.2% | 61.8% |
+| IDM car-following model | 25.6% | 74.6% |
+| CARLA Autopilot (recorded path and speed) | 9.1% | 68.8% |
+
+What this shows, honestly: the safety layer removes almost all crashes, but the AI driver with it does about as well as a simple constant-velocity driver with the same layer. A probe where the real driver drives and the model only predicts explains why - when the real driver slows down, the model predicts only 5.5% of that slow-down. It has learned to keep going, not to brake.
 
 ## What's next
 
-A multi-modal imitation-learning driver trained on these scenarios is in progress. This line of work is also the basis of a paper under review at WAFR 2026.
+DAgger-style data, where the model drives and the expert's correction is recorded, to teach braking and recovery. This work is also the basis of my first-author paper submitted to WAFR 2026.
 
 ## Where it started
 
 The thesis grew out of my iHub-Data (IIIT Hyderabad) internship and B.Tech project, [Drone to Ego](/projects/drone-to-ego). There I built the first version: drone scenes rebuilt in CARLA, spawn correction, time-to-collision based collision avoidance, and a SegFormer-B1 behavior cloning model trained on about 66,000 image-command pairs (0.69 m/s speed error, 4.89°/s steering error).
 
-That project showed how much the data itself was holding the model back. The thesis rebuilds the pipeline around that: six calibrated regions instead of five, validated scenarios, and collisions caught before simulation instead of patched during it.
+That project showed how much the data itself was holding the model back. The thesis rebuilds the pipeline around that: six calibrated regions instead of five, filtered and validated scenarios, collisions caught before simulation, and a driver that uses LiDAR as well as the camera.
 
 [Read about Drone to Ego ->](/projects/drone-to-ego)
